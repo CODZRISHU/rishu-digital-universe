@@ -1,0 +1,22 @@
+﻿{
+  "name": "rishu-digital-universe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rishu Jha — Personal Digital Universe & CMS Platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"API,WEB\" -c \"magenta,cyan\" \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm --workspace=apps/api run start:dev",
+    "dev:web": "npm --workspace=apps/web run dev",
+    "build": "npm --workspace=packages/shared-types run build && npm --workspace=apps/api run build && npm --workspace=apps/web run build",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "seed": "npm --workspace=apps/api run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
