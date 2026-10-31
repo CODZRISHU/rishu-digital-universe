@@ -40,7 +40,7 @@ export const About: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-20">
         <div className="lg:col-span-5 flex flex-col items-center">
           <div className="glass-panel p-8 rounded-3xl border border-white/10 w-full flex flex-col items-center shadow-glow-primary">
-            <RishuAvatar size="lg" expression="happy" />
+            <RishuAvatar size="xl" mode="full" expression="happy" />
             <div className="mt-6 text-center space-y-1 w-full border-t border-white/10 pt-4">
               <h2 className="font-heading font-bold text-xl text-white">Rishu Kumar Jha</h2>
               <p className="text-xs font-mono text-[#00D9FF]">Programmer Analyst @ Cognizant</p>

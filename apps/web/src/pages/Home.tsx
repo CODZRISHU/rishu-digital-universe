@@ -137,9 +137,9 @@ export const Home: React.FC = () => {
             transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
             className="lg:col-span-5 flex flex-col items-center justify-center relative"
           >
-            {/* Tech HUD Ring Frame */}
-            <div className="w-full max-w-[440px] aspect-[5/6] relative flex items-center justify-center">
-              <RishuAvatar size="hero" animation="entrance" expression="confident" />
+            {/* Digital Twin Avatar Container */}
+            <div className="w-full max-w-[460px] h-[600px] relative flex items-center justify-center">
+              <RishuAvatar size="hero" mode="full" animation="entrance" expression="confident" />
             </div>
 
             {/* Sub-label under avatar */}
