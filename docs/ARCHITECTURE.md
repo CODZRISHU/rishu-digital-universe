@@ -1,4 +1,4 @@
-﻿# Architecture Overview
+# Architecture Overview
 
 ```
 rishu-digital-universe/

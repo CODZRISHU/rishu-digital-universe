@@ -1,0 +1,239 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="100%" height="100%" id="rishu-svg-avatar">
+  <defs>
+    <!-- Ambient & Tech Glow Gradients -->
+    <radialGradient id="cyber-glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#A855F7" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#00D9FF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#050505" stop-opacity="0"/>
+    </radialGradient>
+    
+    <linearGradient id="skin-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#EAB690"/>
+      <stop offset="60%" stop-color="#D79971"/>
+      <stop offset="100%" stop-color="#BD7A52"/>
+    </linearGradient>
+
+    <linearGradient id="skin-shadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#BD7A52"/>
+      <stop offset="100%" stop-color="#8F5131"/>
+    </linearGradient>
+
+    <linearGradient id="hair-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D2B33"/>
+      <stop offset="35%" stop-color="#19181D"/>
+      <stop offset="100%" stop-color="#0D0D10"/>
+    </linearGradient>
+
+    <linearGradient id="hair-highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4C4857" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#19181D" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="shirt-maroon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5C1838"/>
+      <stop offset="50%" stop-color="#45122B"/>
+      <stop offset="100%" stop-color="#2B0A1A"/>
+    </linearGradient>
+
+    <linearGradient id="shirt-collar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6E1E44"/>
+      <stop offset="100%" stop-color="#3B0E23"/>
+    </linearGradient>
+
+    <linearGradient id="iris-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4E3120"/>
+      <stop offset="60%" stop-color="#2B1A0F"/>
+      <stop offset="100%" stop-color="#120A05"/>
+    </linearGradient>
+
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Group: Ambient Glow -->
+  <g id="ambient-glow">
+    <circle cx="250" cy="270" r="220" fill="url(#cyber-glow)" />
+    <!-- Tech Rings -->
+    <circle cx="250" cy="270" r="210" fill="none" stroke="#A855F7" stroke-width="1" stroke-dasharray="8 12" opacity="0.4" />
+    <circle cx="250" cy="270" r="235" fill="none" stroke="#00D9FF" stroke-width="0.8" stroke-dasharray="4 20" opacity="0.3" />
+  </g>
+
+  <!-- Group: Shoulders & Shirt (Maroon Patterned Button-up) -->
+  <g id="shirt">
+    <!-- Shoulder base -->
+    <path d="M120 460 C 145 420, 190 395, 250 395 C 310 395, 355 420, 380 460 L 415 600 L 85 600 Z" fill="url(#shirt-maroon)" />
+    
+    <!-- Pattern details (subtle star/floral motif dots) -->
+    <g opacity="0.18" fill="#F472B6">
+      <circle cx="160" cy="460" r="3" /><circle cx="200" cy="445" r="2.5" />
+      <circle cx="300" cy="445" r="2.5" /><circle cx="340" cy="460" r="3" />
+      <circle cx="150" cy="510" r="2" /><circle cx="220" cy="500" r="3" />
+      <circle cx="280" cy="500" r="3" /><circle cx="350" cy="510" r="2" />
+      <circle cx="180" cy="550" r="2.5" /><circle cx="320" cy="550" r="2.5" />
+    </g>
+
+    <!-- Chest Placket -->
+    <path d="M236 410 L264 410 L261 600 L239 600 Z" fill="#3B0E23" />
+    <!-- Buttons -->
+    <circle cx="250" cy="445" r="3.5" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1" />
+    <circle cx="250" cy="495" r="3.5" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1" />
+    <circle cx="250" cy="545" r="3.5" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1" />
+
+    <!-- Left & Right Collar Fold -->
+    <path d="M250 415 L 180 395 L 210 440 L 246 422 Z" fill="url(#shirt-collar)" />
+    <path d="M250 415 L 320 395 L 290 440 L 254 422 Z" fill="url(#shirt-collar)" />
+    
+    <!-- Chest V-neck shadow -->
+    <path d="M225 385 Q 250 420 275 385 Z" fill="#8F5131" />
+  </g>
+
+  <!-- Group: Neck -->
+  <g id="neck">
+    <path d="M212 300 L 212 390 C 212 405, 288 405, 288 390 L 288 300 Z" fill="url(#skin-shadow)" />
+    <path d="M220 300 L 220 380 Q 250 398 280 380 L 280 300 Z" fill="url(#skin-gradient)" />
+    <!-- Adam's apple subtle contour -->
+    <path d="M246 345 Q 250 350 254 345" stroke="#A76540" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Group: Ears -->
+  <g id="ears">
+    <!-- Left Ear -->
+    <path d="M172 230 C 158 230, 155 265, 170 282 C 174 286, 178 286, 180 278 Z" fill="url(#skin-gradient)" />
+    <path d="M168 245 C 164 250, 164 265, 172 270" stroke="#BD7A52" stroke-width="2.5" fill="none" />
+    
+    <!-- Right Ear (With Wireless Earbud visible from reference photo) -->
+    <path d="M328 230 C 342 230, 345 265, 330 282 C 326 286, 322 286, 320 278 Z" fill="url(#skin-gradient)" />
+    <path d="M332 245 C 336 250, 336 265, 328 270" stroke="#BD7A52" stroke-width="2.5" fill="none" />
+    <!-- Wireless Earbud -->
+    <g id="earbud">
+      <ellipse cx="327" cy="256" rx="4.5" ry="7" fill="#1E2024" stroke="#475569" stroke-width="1" />
+      <circle cx="327" cy="254" r="1.5" fill="#00D9FF" opacity="0.9" />
+    </g>
+  </g>
+
+  <!-- Group: Face Shape & Contours -->
+  <g id="face">
+    <!-- Oval head structure matching Rishu's jawline & proportions -->
+    <path d="M174 210 C 170 140, 330 140, 326 210 C 326 270, 310 326, 250 342 C 190 326, 174 270, 174 210 Z" fill="url(#skin-gradient)" />
+    <!-- Cheek & jaw ambient shadows -->
+    <path d="M178 240 C 182 300, 210 330, 250 340 C 290 330, 318 300, 322 240 C 324 285, 295 334, 250 337 C 205 334, 176 285, 178 240 Z" fill="#9E6340" opacity="0.25" />
+    <!-- Soft forehead highlight -->
+    <ellipse cx="250" cy="180" rx="45" ry="20" fill="#FFFFFF" opacity="0.08" />
+  </g>
+
+  <!-- Group: Facial Hair (Trimmed Moustache & Short Chin Beard/Goatee) -->
+  <g id="facial-hair">
+    <!-- Moustache -->
+    <path d="M228 288 C 238 285, 246 289, 250 292 C 254 289, 262 285, 272 288 C 265 295, 255 296, 250 296 C 245 296, 235 295, 228 288 Z" fill="#1C1B20" opacity="0.88" />
+    
+    <!-- Soul patch under lower lip -->
+    <path d="M245 315 L 255 315 L 253 322 L 247 322 Z" fill="#1C1B20" opacity="0.75" />
+    
+    <!-- Chin beard & trimmed jawline contour -->
+    <path d="M226 330 C 238 338, 262 338, 274 330 C 272 338, 264 343, 250 343 C 236 343, 228 338, 226 330 Z" fill="#1C1B20" opacity="0.82" />
+    <path d="M188 285 C 196 315, 220 335, 250 342 C 280 335, 304 315, 312 285 C 308 308, 280 337, 250 339 C 220 337, 192 308, 188 285 Z" fill="#1C1B20" opacity="0.22" />
+  </g>
+
+  <!-- Group: Mouth & Confident Smile -->
+  <g id="mouth">
+    <!-- Smile background / inner mouth -->
+    <path id="mouth-cavity" d="M225 298 Q 250 300 275 298 Q 250 322 225 298 Z" fill="#4A1521" />
+    <!-- White teeth reveal -->
+    <path id="mouth-teeth" d="M230 299 Q 250 301 270 299 Q 266 307 250 307 Q 234 307 230 299 Z" fill="#F8FAFC" />
+    <!-- Upper Lip -->
+    <path id="lip-upper" d="M224 298 C 236 295, 245 297, 250 298 C 255 297, 264 295, 276 298 C 265 301, 255 301, 250 301 C 245 301, 235 301, 224 298 Z" fill="#995843" />
+    <!-- Lower Lip -->
+    <path id="lip-lower" d="M230 308 Q 250 318 270 308 Q 250 314 230 308 Z" fill="#B36B54" />
+    <!-- Smile dimple curves -->
+    <path d="M220 295 Q 223 301 224 306" stroke="#9E6340" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7" />
+    <path d="M280 295 Q 277 301 276 306" stroke="#9E6340" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.7" />
+  </g>
+
+  <!-- Group: Nose -->
+  <g id="nose">
+    <!-- Nose bridge shadow -->
+    <path d="M246 205 L 243 260 Q 237 268 245 272" stroke="#BD7A52" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.6" />
+    <!-- Nostrils and tip -->
+    <path d="M240 268 Q 250 274 260 268" stroke="#8F5131" stroke-width="2.2" stroke-linecap="round" fill="none" />
+    <ellipse cx="250" cy="265" rx="3.5" ry="2" fill="#FFFFFF" opacity="0.25" />
+    <!-- Nostril curves -->
+    <circle cx="238" cy="269" r="1.4" fill="#6E381C" />
+    <circle cx="262" cy="269" r="1.4" fill="#6E381C" />
+  </g>
+
+  <!-- Group: Eyes -->
+  <g id="eyes">
+    <!-- Left Eye -->
+    <g id="eye-left">
+      <!-- Sclera -->
+      <path d="M205 220 Q 220 213 235 220 Q 220 228 205 220 Z" fill="#F1F5F9" />
+      <!-- Pupil / Iris (Dynamic Mouse Tracking Container) -->
+      <g id="iris-left" transform="translate(0, 0)">
+        <ellipse cx="220" cy="220" rx="5.5" ry="5.5" fill="url(#iris-gradient)" />
+        <circle cx="220" cy="220" r="2.8" fill="#0A0604" />
+        <!-- Reflection highlight dot -->
+        <circle cx="221.5" cy="218.5" r="1.5" fill="#FFFFFF" />
+        <circle cx="218.5" cy="221" r="0.8" fill="#FFFFFF" opacity="0.6" />
+      </g>
+      <!-- Eyelid / Upper Lash Line -->
+      <path id="eyelid-left" d="M204 220 Q 220 211 236 220" stroke="#1E1B24" stroke-width="2.6" stroke-linecap="round" fill="none" />
+      <path d="M206 222 Q 220 227 234 222" stroke="#9E6340" stroke-width="1" fill="none" opacity="0.5" />
+    </g>
+
+    <!-- Right Eye -->
+    <g id="eye-right">
+      <!-- Sclera -->
+      <path d="M265 220 Q 280 213 295 220 Q 280 228 265 220 Z" fill="#F1F5F9" />
+      <!-- Pupil / Iris (Dynamic Mouse Tracking Container) -->
+      <g id="iris-right" transform="translate(0, 0)">
+        <ellipse cx="280" cy="220" rx="5.5" ry="5.5" fill="url(#iris-gradient)" />
+        <circle cx="280" cy="220" r="2.8" fill="#0A0604" />
+        <!-- Reflection highlight dot -->
+        <circle cx="281.5" cy="218.5" r="1.5" fill="#FFFFFF" />
+        <circle cx="278.5" cy="221" r="0.8" fill="#FFFFFF" opacity="0.6" />
+      </g>
+      <!-- Eyelid / Upper Lash Line -->
+      <path id="eyelid-right" d="M264 220 Q 280 211 296 220" stroke="#1E1B24" stroke-width="2.6" stroke-linecap="round" fill="none" />
+      <path d="M266 222 Q 280 227 294 222" stroke="#9E6340" stroke-width="1" fill="none" opacity="0.5" />
+    </g>
+  </g>
+
+  <!-- Group: Eyebrows -->
+  <g id="eyebrows">
+    <!-- Left Eyebrow -->
+    <path id="eyebrow-left" d="M202 208 C 210 201, 224 200, 237 206 C 228 205, 214 204, 202 208 Z" fill="#18171C" />
+    <!-- Right Eyebrow -->
+    <path id="eyebrow-right" d="M263 206 C 276 200, 290 201, 298 208 C 286 204, 272 205, 263 206 Z" fill="#18171C" />
+  </g>
+
+  <!-- Group: Hair (Modern Styled Trim with Volume) -->
+  <g id="hair">
+    <!-- Main silhouette covering top & temples -->
+    <path d="M174 205 C 168 180, 172 135, 205 118 C 235 102, 275 102, 305 116 C 332 128, 336 175, 326 205 C 318 190, 316 160, 295 152 C 275 145, 225 145, 205 152 C 185 160, 180 190, 174 205 Z" fill="url(#hair-gradient)" />
+    
+    <!-- Hair Volume & Top Wave -->
+    <path d="M185 140 C 200 115, 240 106, 275 108 C 300 110, 320 122, 325 145 C 310 132, 280 124, 250 126 C 220 128, 198 135, 185 140 Z" fill="url(#hair-highlight)" />
+    
+    <!-- Stylized hair strand accents -->
+    <path d="M210 125 Q 240 116 270 122" stroke="#524E60" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6" />
+    <path d="M230 115 Q 260 110 288 118" stroke="#524E60" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5" />
+    <path d="M195 145 Q 220 135 245 138" stroke="#433F50" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7" />
+
+    <!-- Sideburns & Temple Trim -->
+    <path d="M174 205 L 178 226 L 184 212 Z" fill="#19181D" />
+    <path d="M326 205 L 322 226 L 316 212 Z" fill="#19181D" />
+  </g>
+
+  <!-- Interactive Tech HUD Overlays (Subtle Futuristic Holographic Elements) -->
+  <g id="hud-accents" opacity="0.8">
+    <path d="M100 280 L 130 280 L 140 290" stroke="#A855F7" stroke-width="1.2" fill="none" opacity="0.5" />
+    <circle cx="100" cy="280" r="2" fill="#A855F7" />
+    <text x="75" y="275" font-family="'JetBrains Mono', monospace" font-size="9" fill="#A855F7" opacity="0.75">&lt;AI_ARCHITECT/&gt;</text>
+
+    <path d="M400 280 L 370 280 L 360 290" stroke="#00D9FF" stroke-width="1.2" fill="none" opacity="0.5" />
+    <circle cx="400" cy="280" r="2" fill="#00D9FF" />
+    <text x="365" y="275" font-family="'JetBrains Mono', monospace" font-size="9" fill="#00D9FF" opacity="0.75">SYSTEM_ONLINE</text>
+  </g>
+</svg>

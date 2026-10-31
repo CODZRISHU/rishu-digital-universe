@@ -1,4 +1,4 @@
-﻿# RISHU JHA — PERSONAL DIGITAL UNIVERSE
+# RISHU JHA — PERSONAL DIGITAL UNIVERSE
 
 A next-generation personal portfolio, interactive 3D universe, and autonomous management platform built for **Rishu Kumar Jha** (Programmer Analyst at Cognizant, Full-Stack Developer & AI Systems Engineer).
 

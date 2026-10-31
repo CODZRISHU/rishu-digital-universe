@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-main: #050505;
+    --bg-secondary: #0A0A0D;
+    --surface: #111116;
+    --surface-elevated: #18181F;
+    --accent-primary: #A855F7;
+    --accent-secondary: #00D9FF;
+    --accent-highlight: #C4B5FD;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1F1F28;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A855F7;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(17, 17, 22, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-elevated {
+  background: rgba(24, 24, 31, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-button:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.25);
+}
+
+/* Cyber Neon Text & Glows */
+.text-neon-purple {
+  color: #A855F7;
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.text-neon-cyan {
+  color: #00D9FF;
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+}
+
+.border-neon-hover {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.border-neon-hover:hover {
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+}
+
+/* Background Gradients */
+.gradient-radial-purple {
+  background: radial-gradient(circle at 50% 30%, rgba(168, 85, 247, 0.15), transparent 70%);
+}
+
+.gradient-radial-cyan {
+  background: radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.12), transparent 70%);
+}
