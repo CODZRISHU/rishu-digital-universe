@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Query, Param, ConflictException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Query, Param, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -8,12 +8,14 @@ import { TelegramService } from '../telegram/telegram.service';
 import { ICreateBookingDto, ApiResponse } from '@rishu/shared-types';
 
 const STANDARD_SLOTS = [
-  '10:00 AM',
-  '11:30 AM',
-  '02:30 PM',
-  '04:00 PM',
-  '06:30 PM',
-  '08:00 PM',
+  '11:00 AM - 12:00 PM',
+  '12:30 PM - 01:30 PM',
+  '02:00 PM - 03:00 PM',
+  '03:30 PM - 04:30 PM',
+  '05:00 PM - 06:00 PM',
+  '06:30 PM - 07:30 PM',
+  '08:00 PM - 09:00 PM',
+  '09:30 PM - 10:30 PM',
 ];
 
 @ApiTags('Bookings')
@@ -26,11 +28,25 @@ export class BookingsController {
   ) {}
 
   @Get('slots')
-  @ApiOperation({ summary: 'Get available time slots for a given date' })
+  @ApiOperation({ summary: 'Get available time slots for a given date (Weekends 11am - 11pm only)' })
   async getAvailableSlots(@Query('date') date: string): Promise<ApiResponse<any>> {
     if (!date) {
       date = new Date().toISOString().split('T')[0];
     }
+
+    // Validate weekend (Saturday or Sunday only)
+    const [y, m, d] = date.split('-').map(Number);
+    const dateObj = new Date(Date.UTC(y, m - 1, d));
+    const dayOfWeek = dateObj.getUTCDay(); // 0 is Sunday, 6 is Saturday
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      return { 
+        success: true, 
+        data: [], 
+        message: 'Sessions are strictly hosted on weekends (Saturday & Sunday) between 11:00 AM and 11:00 PM.',
+        timestamp: new Date().toISOString() 
+      };
+    }
+
     const booked = await this.bookingModel.find({
       sessionDate: date,
       status: { $in: ['confirmed', 'pending'] },
@@ -46,9 +62,19 @@ export class BookingsController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create direct free booking and store in MongoDB' })
+  @ApiOperation({ summary: 'Create direct free booking and store in MongoDB (Weekends 11am-11pm only)' })
   async createBooking(@Body() dto: ICreateBookingDto): Promise<ApiResponse<any>> {
-    // 1. Prevent duplicate bookings for the same date & time slot
+    // 1. Enforce weekend constraint (Saturday and Sunday only, 11am - 11pm)
+    const [y, m, d] = dto.sessionDate.split('-').map(Number);
+    const dateObj = new Date(Date.UTC(y, m - 1, d));
+    const dayOfWeek = dateObj.getUTCDay(); // 0 is Sunday, 6 is Saturday
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      throw new BadRequestException(
+        'Appointments can only be scheduled on weekends (Saturday and Sunday) between 11:00 AM and 11:00 PM.'
+      );
+    }
+
+    // 2. Prevent duplicate bookings for the same date & time slot
     const existing = await this.bookingModel.findOne({
       sessionDate: dto.sessionDate,
       startTime: dto.startTime,
@@ -57,6 +83,7 @@ export class BookingsController {
     if (existing) {
       throw new ConflictException('This time slot has already been reserved. Please select another slot.');
     }
+
 
     // 2. Direct Confirmed Booking with 0 fee (Free 1-on-1 session)
     const booking = await this.bookingModel.create({

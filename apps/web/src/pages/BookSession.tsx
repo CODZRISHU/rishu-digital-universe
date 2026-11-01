@@ -46,13 +46,53 @@ const SERVICES_CATALOG = [
 ];
 
 const TIME_SLOTS = [
-  '10:00 AM - 11:00 AM',
-  '11:30 AM - 12:30 PM',
-  '02:30 PM - 03:30 PM',
-  '04:00 PM - 05:00 PM',
+  '11:00 AM - 12:00 PM',
+  '12:30 PM - 01:30 PM',
+  '02:00 PM - 03:00 PM',
+  '03:30 PM - 04:30 PM',
+  '05:00 PM - 06:00 PM',
   '06:30 PM - 07:30 PM',
   '08:00 PM - 09:00 PM',
+  '09:30 PM - 10:30 PM',
 ];
+
+// Helper: Calculate next weekend date (Saturday or Sunday)
+const getNextWeekend = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  while (d.getDay() !== 0 && d.getDay() !== 6) {
+    d.setDate(d.getDate() + 1);
+  }
+  return d.toISOString().split('T')[0];
+};
+
+// Helper: Check if date is Saturday (6) or Sunday (0)
+const isWeekend = (dateStr: string) => {
+  if (!dateStr) return false;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return day === 0 || day === 6;
+};
+
+// Generate upcoming 4 weekend options for quick selection
+const getUpcomingWeekends = () => {
+  const options: { dateStr: string; label: string }[] = [];
+  const cur = new Date();
+  cur.setDate(cur.getDate() + 1);
+  while (options.length < 4) {
+    if (cur.getDay() === 0 || cur.getDay() === 6) {
+      const dateStr = cur.toISOString().split('T')[0];
+      const dayName = cur.toLocaleDateString('en-US', { weekday: 'short' });
+      const monthDay = cur.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      options.push({
+        dateStr,
+        label: `${dayName}, ${monthDay}`,
+      });
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return options;
+};
 
 export const BookSession: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -63,13 +103,11 @@ export const BookSession: React.FC = () => {
     SERVICES_CATALOG.find(s => s.id === serviceParam) || SERVICES_CATALOG[0]
   );
   
-  // Date setup (default tomorrow)
-  const defaultDate = new Date();
-  defaultDate.setDate(defaultDate.getDate() + 1);
-  const formattedDefaultDate = defaultDate.toISOString().split('T')[0];
-
-  const [sessionDate, setSessionDate] = useState<string>(formattedDefaultDate);
+  // Weekend-only date setup (default to next Saturday or Sunday)
+  const [sessionDate, setSessionDate] = useState<string>(getNextWeekend());
   const [selectedSlot, setSelectedSlot] = useState<string>(TIME_SLOTS[0]);
+  const upcomingWeekends = getUpcomingWeekends();
+  const validWeekend = isWeekend(sessionDate);
   
   // Customer details
   const [customerName, setCustomerName] = useState('');
@@ -80,6 +118,7 @@ export const BookSession: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState<any | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
   useEffect(() => {
     portfolioApi.trackEvent('booking_start', '/book-session');
@@ -211,46 +250,88 @@ export const BookSession: React.FC = () => {
           </div>
         )}
 
-        {/* Step 2: Date & Slot */}
+        {/* Step 2: Date & Slot (Weekends 11am - 11pm only) */}
         {step === 2 && (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-heading font-bold text-white">Select Date & Available Slot:</h3>
-              <button onClick={() => setStep(1)} className="text-xs font-mono text-gray-400 hover:text-white">
+              <div>
+                <h3 className="text-xl font-heading font-bold text-white">Select Date & Available Slot:</h3>
+                <p className="text-xs font-mono text-[#00D9FF] mt-0.5">
+                  ⚡ Live 1-on-1 sessions are hosted exclusively on <b>Weekends (Saturday & Sunday)</b> from <b>11:00 AM to 11:00 PM IST</b>.
+                </p>
+              </div>
+              <button onClick={() => setStep(1)} className="text-xs font-mono text-gray-400 hover:text-white shrink-0">
                 ← Change Topic
               </button>
+            </div>
+
+            {/* Quick Weekend Select Buttons */}
+            <div className="space-y-2">
+              <label className="text-[11px] font-mono text-gray-400 uppercase tracking-wider block">
+                Quick Select Upcoming Weekend:
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {upcomingWeekends.map((opt) => (
+                  <button
+                    key={opt.dateStr}
+                    type="button"
+                    onClick={() => setSessionDate(opt.dateStr)}
+                    className={`py-2 px-3 rounded-xl text-xs font-mono border transition-all ${
+                      sessionDate === opt.dateStr
+                        ? 'bg-[#A855F7]/20 border-[#A855F7] text-white shadow-glow-primary font-bold'
+                        : 'bg-white/[0.02] border-white/10 text-gray-400 hover:text-white hover:border-white/20'
+                    }`}
+                  >
+                    📅 {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Date Input */}
               <div className="space-y-2">
-                <label className="text-xs font-mono text-gray-300 block">Session Date (Asia/Kolkata):</label>
+                <label className="text-xs font-mono text-gray-300 block">Or Choose Custom Weekend Date:</label>
                 <input
                   type="date"
                   value={sessionDate}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setSessionDate(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-[#A855F7]"
+                  className={`w-full px-4 py-3 rounded-xl bg-white/5 border text-white font-mono text-sm focus:outline-none ${
+                    validWeekend ? 'border-white/10 focus:border-[#A855F7]' : 'border-amber-500/80 bg-amber-500/10'
+                  }`}
                 />
-                <p className="text-[11px] text-gray-500 font-mono">
-                  Calendar slots available across the upcoming 14 days.
-                </p>
+                {!validWeekend ? (
+                  <p className="text-xs text-amber-400 font-mono flex items-center gap-1.5 mt-1.5">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>Selected date is a weekday. Please pick a Saturday or Sunday.</span>
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-green-400 font-mono flex items-center gap-1 mt-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Valid weekend date selected (11:00 AM – 11:00 PM IST).</span>
+                  </p>
+                )}
               </div>
 
               {/* Slots */}
               <div className="space-y-2">
-                <label className="text-xs font-mono text-gray-300 block">Available Time Slots:</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-mono text-gray-300">Available Weekend Slots:</label>
+                  <span className="text-[10px] font-mono text-gray-400">11 AM – 11 PM</span>
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   {TIME_SLOTS.map((slot) => (
                     <button
                       key={slot}
                       type="button"
+                      disabled={!validWeekend}
                       onClick={() => setSelectedSlot(slot)}
                       className={`px-3 py-2.5 rounded-xl text-xs font-mono border transition-all ${
                         selectedSlot === slot
                           ? 'border-[#00D9FF] bg-[#00D9FF]/15 text-white font-semibold shadow-glow-secondary'
                           : 'border-white/10 bg-white/[0.02] text-gray-400 hover:text-white hover:border-white/20'
-                      }`}
+                      } ${!validWeekend ? 'opacity-40 cursor-not-allowed' : ''}`}
                     >
                       {slot}
                     </button>
@@ -267,8 +348,13 @@ export const BookSession: React.FC = () => {
                 Back
               </button>
               <button
-                onClick={() => setStep(3)}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-mono text-white bg-gradient-to-r from-[#00D9FF] to-[#0099BF] hover:scale-[1.02] transition-all shadow-glow-secondary"
+                onClick={() => validWeekend && setStep(3)}
+                disabled={!validWeekend}
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-mono text-white transition-all ${
+                  validWeekend
+                    ? 'bg-gradient-to-r from-[#00D9FF] to-[#0099BF] hover:scale-[1.02] shadow-glow-secondary'
+                    : 'bg-gray-700/50 cursor-not-allowed opacity-50'
+                }`}
               >
                 <span>Continue to Attendee Details</span>
                 <ArrowRight className="w-4 h-4" />
