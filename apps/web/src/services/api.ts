@@ -108,6 +108,14 @@ export const portfolioApi = {
   getContactInquiries: async () => 
     (await apiClient.get<ApiResponse<any[]>>('/contact/admin/all')).data.data!,
   
+  // Telegram Notifications
+  getTelegramStatus: async () => 
+    (await apiClient.get<ApiResponse<any>>('/telegram/status')).data.data!,
+  updateTelegramConfig: async (data: { botToken: string; chatId: string }) => 
+    (await apiClient.post<ApiResponse<any>>('/telegram/config', data)).data.data!,
+  testTelegramNotification: async () => 
+    (await apiClient.post<ApiResponse<any>>('/telegram/test')).data,
+
   // Generic CRUD mutations
   createItem: async <T>(module: string, data: any) => 
     (await apiClient.post<ApiResponse<T>>(`/${module}`, data)).data.data!,
@@ -116,3 +124,4 @@ export const portfolioApi = {
   deleteItem: async (module: string, id: string) => 
     (await apiClient.delete<ApiResponse<any>>(`/${module}/${id}`)).data,
 };
+

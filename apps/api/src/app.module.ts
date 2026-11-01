@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { TelegramModule } from './modules/telegram/telegram.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { ProjectsModule } from './modules/projects/projects.module';
@@ -29,6 +30,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
       }),
       inject: [ConfigService],
     }),
+    TelegramModule,
     AuthModule,
     ProfileModule,
     ProjectsModule,

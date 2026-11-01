@@ -22,7 +22,13 @@ import {
   DollarSign, 
   Users, 
   Eye, 
-  ExternalLink 
+  ExternalLink,
+  MessageSquare,
+  Send,
+  Smartphone,
+  Bell,
+  Check,
+  Radio
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { portfolioApi } from '../../services/api';
@@ -32,8 +38,9 @@ export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'projects' | 'experience' | 'skills' | 'services' | 'bookings' | 'messages'
+    'overview' | 'projects' | 'experience' | 'skills' | 'services' | 'bookings' | 'messages' | 'telegram'
   >('overview');
+
 
   const [metrics, setMetrics] = useState({
     totalVisitors: 1248,
@@ -82,6 +89,17 @@ export const AdminDashboard: React.FC = () => {
 
   const [statusNotification, setStatusNotification] = useState<string | null>(null);
 
+  // Telegram Alert State
+  const [telegramStatus, setTelegramStatus] = useState<any>({
+    configured: false,
+    phoneNumber: '9304783530',
+    chatId: null,
+    hasBotToken: false,
+  });
+  const [botTokenInput, setBotTokenInput] = useState('');
+  const [chatIdInput, setChatIdInput] = useState('');
+  const [isTestingTelegram, setIsTestingTelegram] = useState(false);
+
   // Direct access: fetch live bookings and contact transmissions from MongoDB API
   useEffect(() => {
     const fetchData = async () => {
@@ -108,6 +126,15 @@ export const AdminDashboard: React.FC = () => {
       } catch (e) {
         // Fallback
       }
+
+      try {
+        const teleStatus = await portfolioApi.getTelegramStatus();
+        if (teleStatus) {
+          setTelegramStatus(teleStatus);
+        }
+      } catch (e) {
+        // Fallback
+      }
     };
     fetchData();
   }, []);
@@ -120,6 +147,41 @@ export const AdminDashboard: React.FC = () => {
   const handleUpdateBookingStatus = (id: string, newStatus: string) => {
     setBookings(prev => prev.map(b => b._id === id ? { ...b, status: newStatus } : b));
     notify(`Booking status updated to ${newStatus}`);
+  };
+
+  const handleSaveTelegram = async () => {
+    if (!botTokenInput && !chatIdInput) {
+      notify('Please enter Bot Token or Chat ID');
+      return;
+    }
+    try {
+      const res = await portfolioApi.updateTelegramConfig({
+        botToken: botTokenInput,
+        chatId: chatIdInput,
+      });
+      setTelegramStatus(res);
+      notify('Telegram configuration updated successfully!');
+      setBotTokenInput('');
+      setChatIdInput('');
+    } catch (e: any) {
+      notify('Failed to update Telegram configuration');
+    }
+  };
+
+  const handleTestTelegram = async () => {
+    setIsTestingTelegram(true);
+    try {
+      const res = await portfolioApi.testTelegramNotification();
+      notify(res.message || 'Telegram test message triggered');
+      try {
+        const updated = await portfolioApi.getTelegramStatus();
+        setTelegramStatus(updated);
+      } catch {}
+    } catch (e: any) {
+      notify('Failed to dispatch Telegram test notification');
+    } finally {
+      setIsTestingTelegram(false);
+    }
   };
 
   return (
@@ -140,6 +202,7 @@ export const AdminDashboard: React.FC = () => {
           <nav className="space-y-1 text-xs font-mono">
             {[
               { id: 'overview', name: 'Overview & Metrics', icon: BarChart3 },
+              { id: 'telegram', name: 'Telegram Alerts', icon: MessageSquare },
               { id: 'projects', name: 'Projects CMS', icon: FolderKanban },
               { id: 'experience', name: 'Experience CMS', icon: Briefcase },
               { id: 'skills', name: 'Skills & Tech', icon: Cpu },
@@ -260,11 +323,49 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
+            {/* Telegram Instant Notifications Alert Banner */}
+            <div className="glass-panel p-6 rounded-3xl border border-[#A855F7]/30 bg-gradient-to-r from-[#A855F7]/10 via-[#0A0A0D] to-[#00D9FF]/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#A855F7]/20 border border-[#A855F7]/40 flex items-center justify-center text-[#00D9FF] shrink-0">
+                  <MessageSquare className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-heading font-bold text-white text-base">Telegram Instant Dispatch System</h3>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-green-500/10 text-green-400 border border-green-500/30 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                      Direct to +91 9304783530
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400 font-mono mt-0.5">
+                    All client appointments, consultation details, and contact transmissions trigger instant alerts directly on your phone.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <button
+                  onClick={handleTestTelegram}
+                  disabled={isTestingTelegram}
+                  className="px-4 py-2 rounded-xl text-xs font-mono glass-button text-white hover:border-[#00D9FF]/60 flex items-center gap-2"
+                >
+                  <Send className={`w-3.5 h-3.5 text-[#00D9FF] ${isTestingTelegram ? 'animate-spin' : ''}`} />
+                  <span>{isTestingTelegram ? 'Transmitting...' : 'Send Test Alert'}</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('telegram')}
+                  className="px-4 py-2 rounded-xl text-xs font-mono bg-[#A855F7] text-white hover:bg-[#9333EA] transition-colors"
+                >
+                  Configure
+                </button>
+              </div>
+            </div>
+
             {/* Upcoming Appointments Table */}
             <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
               <h3 className="font-heading font-bold text-lg text-white">Recent Session Bookings</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
+
                   <thead>
                     <tr className="border-b border-white/10 text-gray-400">
                       <th className="pb-3">Client</th>
@@ -387,6 +488,195 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Telegram Alerts Tab */}
+        {activeTab === 'telegram' && (
+          <div className="space-y-8 mt-6">
+            {/* Header info */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h3 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+                  <span>Telegram Instant Alert System</span>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-[#A855F7]/15 text-[#C4B5FD] border border-[#A855F7]/30">
+                    Target: +91 9304783530
+                  </span>
+                </h3>
+                <p className="text-xs font-mono text-gray-400 mt-1">
+                  Instant real-time mobile push notifications delivered straight to your Telegram chat for every booking and inquiry.
+                </p>
+              </div>
+
+              <button
+                onClick={handleTestTelegram}
+                disabled={isTestingTelegram}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono text-white bg-gradient-to-r from-[#A855F7] to-[#00D9FF] hover:opacity-90 shadow-glow-primary disabled:opacity-50"
+              >
+                <Send className={`w-3.5 h-3.5 ${isTestingTelegram ? 'animate-spin' : ''}`} />
+                <span>{isTestingTelegram ? 'Sending Test...' : 'Send Test Alert Now'}</span>
+              </button>
+            </div>
+
+            {/* Status Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div className="glass-panel p-5 rounded-2xl border border-white/10 space-y-1">
+                <span className="text-[11px] font-mono text-gray-400">Telegram Destination</span>
+                <p className="text-lg font-heading font-bold text-white flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-[#00D9FF]" />
+                  <span>+91 9304783530</span>
+                </p>
+                <p className="text-[10px] font-mono text-gray-500">Rishu Kumar Jha's mobile</p>
+              </div>
+
+              <div className="glass-panel p-5 rounded-2xl border border-white/10 space-y-1">
+                <span className="text-[11px] font-mono text-gray-400">Bot Connection</span>
+                <p className="text-lg font-heading font-bold text-white flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${telegramStatus.hasBotToken ? 'bg-green-400 animate-pulse' : 'bg-yellow-400'}`}></span>
+                  <span>{telegramStatus.hasBotToken ? 'Bot Token Set' : 'Awaiting Token'}</span>
+                </p>
+                <p className="text-[10px] font-mono text-gray-500">
+                  {telegramStatus.hasBotToken ? 'Token active in environment' : 'Paste below or set TELEGRAM_BOT_TOKEN'}
+                </p>
+              </div>
+
+              <div className="glass-panel p-5 rounded-2xl border border-white/10 space-y-1">
+                <span className="text-[11px] font-mono text-gray-400">Telegram Chat ID</span>
+                <p className="text-lg font-heading font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-[#A855F7]" />
+                  <span>{telegramStatus.chatId || 'Not Configured'}</span>
+                </p>
+                <p className="text-[10px] font-mono text-gray-500">
+                  {telegramStatus.chatId ? 'Linked to your private chat' : 'Get numeric ID from @userinfobot'}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick 3-Step Setup Guide */}
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
+              <h4 className="font-heading font-bold text-base text-white flex items-center gap-2">
+                <Bell className="w-4 h-4 text-[#00D9FF]" />
+                <span>1-Minute Telegram Setup Instructions</span>
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs font-mono">
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                  <div className="w-6 h-6 rounded-lg bg-[#A855F7]/20 border border-[#A855F7]/40 flex items-center justify-center text-[#A855F7] font-bold">
+                    1
+                  </div>
+                  <h5 className="font-bold text-white">Create Free Bot</h5>
+                  <p className="text-gray-400 text-[11px] leading-relaxed">
+                    Open{' '}
+                    <a
+                      href="https://t.me/BotFather"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#00D9FF] underline hover:text-white"
+                    >
+                      @BotFather
+                    </a>{' '}
+                    on Telegram, send <code className="text-[#A855F7]">/newbot</code>, give it a name like <i>Rishu Portfolio Alerts</i>, and copy the Bot Token.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                  <div className="w-6 h-6 rounded-lg bg-[#00D9FF]/20 border border-[#00D9FF]/40 flex items-center justify-center text-[#00D9FF] font-bold">
+                    2
+                  </div>
+                  <h5 className="font-bold text-white">Get Your Chat ID</h5>
+                  <p className="text-gray-400 text-[11px] leading-relaxed">
+                    From your Telegram app on phone <b>9304783530</b>, open{' '}
+                    <a
+                      href="https://t.me/userinfobot"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#00D9FF] underline hover:text-white"
+                    >
+                      @userinfobot
+                    </a>{' '}
+                    and hit Start. It will instantly reply with your numeric <b>Id</b> (e.g. <i>1483928192</i>).
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                  <div className="w-6 h-6 rounded-lg bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400 font-bold">
+                    3
+                  </div>
+                  <h5 className="font-bold text-white">Activate & Connect</h5>
+                  <p className="text-gray-400 text-[11px] leading-relaxed">
+                    Search for your newly created bot in Telegram and tap <b>Start</b>. Then paste your Bot Token and Chat ID below to link them!
+                  </p>
+                </div>
+              </div>
+
+              {/* Bot Token & Chat ID Configuration Form */}
+              <div className="pt-4 border-t border-white/10 space-y-4">
+                <h5 className="font-heading font-bold text-sm text-white">Update Telegram Credentials</h5>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-mono text-gray-400">TELEGRAM BOT TOKEN</label>
+                    <input
+                      type="password"
+                      value={botTokenInput}
+                      onChange={(e) => setBotTokenInput(e.target.value)}
+                      placeholder="e.g. 7845612345:AAFh0w123456789_ABCdef..."
+                      className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#A855F7]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-mono text-gray-400">TELEGRAM CHAT ID (For 9304783530)</label>
+                    <input
+                      type="text"
+                      value={chatIdInput}
+                      onChange={(e) => setChatIdInput(e.target.value)}
+                      placeholder="e.g. 1483928192"
+                      className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-[#00D9FF]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    onClick={handleSaveTelegram}
+                    className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold text-white bg-[#A855F7] hover:bg-[#9333EA] transition-colors"
+                  >
+                    Save Telegram Credentials
+                  </button>
+                  <button
+                    onClick={handleTestTelegram}
+                    disabled={isTestingTelegram}
+                    className="px-6 py-2.5 rounded-xl text-xs font-mono glass-button text-gray-300 hover:text-white hover:border-[#00D9FF]/50"
+                  >
+                    Send Test Alert
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Sample Alert Preview */}
+            <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
+              <h4 className="font-heading font-bold text-sm text-white">Live Alert Preview in Telegram App</h4>
+              <div className="max-w-lg p-4 rounded-2xl bg-[#17212B] border border-[#2B3948] text-white font-sans text-xs space-y-2.5 shadow-xl">
+                <div className="flex items-center justify-between border-b border-[#2B3948] pb-2 text-[11px] text-[#5EB5F7]">
+                  <span className="font-bold">⚡ NEW 1-ON-1 APPOINTMENT BOOKED! ⚡</span>
+                  <span className="text-[10px] text-gray-400">Just now</span>
+                </div>
+                <div className="space-y-1 text-gray-300">
+                  <p><b className="text-white">Client:</b> Rohan Patel</p>
+                  <p><b className="text-white">Email:</b> rohan@techcorp.com</p>
+                  <p><b className="text-white">Phone:</b> +91 9876543210</p>
+                  <p><b className="text-white">Topic:</b> Full Stack Architecture Mentorship</p>
+                  <p><b className="text-white">Date & Slot:</b> 2026-11-05 at 10:00 AM</p>
+                  <p><b className="text-white">Purpose:</b> Discuss Spring Boot microservices and system design review.</p>
+                  <p className="pt-1 text-[#5EB5F7]"><b className="text-white">Platform:</b> Google Meet Video Call</p>
+                </div>
+                <div className="pt-2 border-t border-[#2B3948] text-[10px] text-gray-400 flex justify-between items-center">
+                  <span>🚀 Rishu Jha — Personal Digital Universe</span>
+                  <span className="text-[#5EB5F7]">9304783530</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
 
         {/* Generic Content for other tabs */}
         {(activeTab === 'projects' || activeTab === 'experience' || activeTab === 'skills' || activeTab === 'services') && (

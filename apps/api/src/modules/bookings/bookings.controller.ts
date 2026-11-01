@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Booking, BookingDocument } from '../../schemas/booking.schema';
 import { Service, ServiceDocument } from '../../schemas/service.schema';
+import { TelegramService } from '../telegram/telegram.service';
 import { ICreateBookingDto, ApiResponse } from '@rishu/shared-types';
 
 const STANDARD_SLOTS = [
@@ -21,6 +22,7 @@ export class BookingsController {
   constructor(
     @InjectModel(Booking.name) private bookingModel: Model<BookingDocument>,
     @InjectModel(Service.name) private serviceModel: Model<ServiceDocument>,
+    private telegramService: TelegramService,
   ) {}
 
   @Get('slots')
@@ -71,6 +73,17 @@ export class BookingsController {
       status: 'confirmed',
       meetingLink: 'https://meet.google.com/rj-session-direct',
     });
+
+    // 3. Dispatch instant alert to Telegram chat
+    this.telegramService.sendBookingNotification({
+      customerName: booking.customerName,
+      customerEmail: booking.customerEmail,
+      customerPhone: booking.customerPhone,
+      serviceId: booking.serviceId,
+      sessionDate: booking.sessionDate,
+      startTime: booking.startTime,
+      purpose: booking.purpose,
+    }).catch(() => {});
 
     return { 
       success: true, 

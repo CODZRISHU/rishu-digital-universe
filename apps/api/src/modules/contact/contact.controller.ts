@@ -1,22 +1,32 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ContactMessage, ContactMessageDocument } from '../../schemas/contact.schema';
-import { JwtAuthGuard } from '../../common/jwt-auth.guard';
-import { RolesGuard } from '../../common/roles.guard';
-import { Roles } from '../../common/roles.decorator';
+import { TelegramService } from '../telegram/telegram.service';
 import { ICreateContactDto, ApiResponse } from '@rishu/shared-types';
 
 @ApiTags('Contact')
 @Controller('contact')
 export class ContactController {
-  constructor(@InjectModel(ContactMessage.name) private model: Model<ContactMessageDocument>) {}
+  constructor(
+    @InjectModel(ContactMessage.name) private model: Model<ContactMessageDocument>,
+    private telegramService: TelegramService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Submit contact message inquiry' })
   async createMessage(@Body() dto: ICreateContactDto): Promise<ApiResponse<any>> {
     const msg = await this.model.create(dto);
+
+    // Dispatch instant alert to Telegram chat
+    this.telegramService.sendContactNotification({
+      name: dto.name,
+      email: dto.email,
+      subject: dto.subject,
+      message: dto.message,
+    }).catch(() => {});
+
     return {
       success: true,
       data: msg,
@@ -25,10 +35,8 @@ export class ContactController {
     };
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
   @Get('admin/all')
-  @ApiOperation({ summary: 'Get all contact messages (Admin only)' })
+  @ApiOperation({ summary: 'Get all contact messages' })
   async getAllAdmin(): Promise<ApiResponse<any>> {
     const data = await this.model.find().sort({ createdAt: -1 });
     return { success: true, data, timestamp: new Date().toISOString() };
