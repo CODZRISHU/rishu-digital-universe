@@ -1,17 +1,22 @@
 # RISHU JHA — PERSONAL DIGITAL UNIVERSE
 
+[![Continuous Integration](https://github.com/CODZRISHU/rishu-digital-universe/actions/workflows/ci.yml/badge.svg)](https://github.com/CODZRISHU/rishu-digital-universe/actions/workflows/ci.yml)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/CODZRISHU/rishu-digital-universe)
+
 A next-generation personal portfolio, interactive 3D universe, and autonomous management platform built for **Rishu Kumar Jha** (Programmer Analyst at Cognizant, Full-Stack Developer & AI Systems Engineer).
 
 ---
 
 ## Key Highlights
 
+- **Digital Twin Standing Avatar**: High-fidelity, transparent background cutout of Rishu standing directly in the 3D cosmic pedestal with ambient floor contact shadows and interactive speech bubbles.
+- **Weekend 1-on-1 Sessions Engine**: Direct free consultation bookings strictly hosted on weekends (Saturday & Sunday, 11:00 AM – 11:00 PM IST) with atomic slot locking.
+- **Real-Time Telegram Alerts**: Instant mobile notifications dispatched to Telegram (+91 9304783530) for every booking and contact submission.
+- **Open Mission Control Admin**: Pure tabular data view for reviewing and managing all incoming inquiries and appointment bookings in real-time.
 - **Awwwards-Caliber Aesthetic**: Futuristic deep black `#050505` theme with neon purple `#A855F7` and cyan `#00D9FF` ambient accents.
-- **AI Vector Avatar Engine**: Fully custom SVG avatar modeled from Rishu's real photograph with dynamic expression shifts (`happy`, `thinking`, `wave`, `celebrate`) and cursor-tracking iris movement.
 - **Three.js Cosmos**: Interactive 3D particle cosmos and floating geometric prisms.
 - **Full-Stack NestJS + MongoDB Core**: Complete REST API architecture with role-based JWT auth, refresh rotation, Swagger documentation, and atomic slot reservation.
-- **End-to-End Booking & Razorpay**: Real appointment scheduling engine with concurrency protection, slot locking, and cryptographic webhook payment verification.
-- **Private Admin CMS Dashboard**: Comprehensive portal to manage profile, projects, experiences, skills, certifications, bookings, revenue, and messages.
+
 
 ---
 
