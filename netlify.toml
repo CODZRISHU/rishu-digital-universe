@@ -1,0 +1,12 @@
+[build]
+  base = "."
+  publish = "apps/web/dist"
+  command = "npm --workspace=packages/shared-types run build && npm --workspace=apps/web run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  NODE_VERSION = "20"

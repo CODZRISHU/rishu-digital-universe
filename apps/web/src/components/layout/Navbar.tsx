@@ -113,8 +113,8 @@ export const Navbar: React.FC = () => {
             </Link>
 
             <Link
-              to="/admin/login"
-              title="Admin Portal"
+              to="/admin"
+              title="Admin Dashboard (Direct Access)"
               className="p-2 rounded-xl glass-button text-gray-400 hover:text-white"
             >
               <ShieldCheck className="w-4 h-4 text-[#A855F7]" />
@@ -181,7 +181,7 @@ export const Navbar: React.FC = () => {
                   <span>Resume</span>
                 </a>
                 <Link
-                  to="/admin/login"
+                  to="/admin"
                   className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-mono glass-button text-gray-200"
                 >
                   <ShieldCheck className="w-4 h-4 text-[#A855F7]" />

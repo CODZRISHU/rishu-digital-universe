@@ -82,11 +82,35 @@ export const AdminDashboard: React.FC = () => {
 
   const [statusNotification, setStatusNotification] = useState<string | null>(null);
 
+  // Direct access: fetch live bookings and contact transmissions from MongoDB API
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/admin/login');
-    }
-  }, [isAuthenticated, navigate]);
+    const fetchData = async () => {
+      try {
+        const liveBookings = await portfolioApi.getAllBookings();
+        if (liveBookings && liveBookings.length > 0) {
+          setBookings(liveBookings);
+          setMetrics(prev => ({
+            ...prev,
+            totalBookings: liveBookings.length,
+            upcomingSessions: liveBookings.filter(b => b.status === 'confirmed').length,
+          }));
+        }
+      } catch (e) {
+        // Fallback to local state
+      }
+
+      try {
+        const liveMsgs = await portfolioApi.getContactInquiries();
+        if (liveMsgs && liveMsgs.length > 0) {
+          setMessages(liveMsgs);
+          setMetrics(prev => ({ ...prev, recentMessages: liveMsgs.length }));
+        }
+      } catch (e) {
+        // Fallback
+      }
+    };
+    fetchData();
+  }, []);
 
   const notify = (msg: string) => {
     setStatusNotification(msg);

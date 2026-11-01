@@ -1,12 +1,9 @@
-import { Controller, Get, Post, Patch, Body, Query, Param, UseGuards, ConflictException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Query, Param, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Booking, BookingDocument } from '../../schemas/booking.schema';
 import { Service, ServiceDocument } from '../../schemas/service.schema';
-import { JwtAuthGuard } from '../../common/jwt-auth.guard';
-import { RolesGuard } from '../../common/roles.guard';
-import { Roles } from '../../common/roles.decorator';
 import { ICreateBookingDto, ApiResponse } from '@rishu/shared-types';
 
 const STANDARD_SLOTS = [
@@ -47,55 +44,51 @@ export class BookingsController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create pending booking with concurrency lock' })
+  @ApiOperation({ summary: 'Create direct free booking and store in MongoDB' })
   async createBooking(@Body() dto: ICreateBookingDto): Promise<ApiResponse<any>> {
-    // 1. Concurrency Check: Prevent double-booking
+    // 1. Prevent duplicate bookings for the same date & time slot
     const existing = await this.bookingModel.findOne({
       sessionDate: dto.sessionDate,
       startTime: dto.startTime,
       status: 'confirmed',
     });
     if (existing) {
-      throw new ConflictException('This time slot has already been reserved. Please choose another slot.');
+      throw new ConflictException('This time slot has already been reserved. Please select another slot.');
     }
 
-    // 2. Resolve amount
-    let fee = 999;
-    const srv = await this.serviceModel.findOne({ slug: dto.serviceId });
-    if (srv) {
-      fee = srv.price;
-    }
-
+    // 2. Direct Confirmed Booking with 0 fee (Free 1-on-1 session)
     const booking = await this.bookingModel.create({
       serviceId: dto.serviceId,
       customerName: dto.customerName,
       customerEmail: dto.customerEmail,
-      customerPhone: dto.customerPhone,
+      customerPhone: dto.customerPhone || '',
       sessionDate: dto.sessionDate,
       startTime: dto.startTime,
       timezone: dto.timezone || 'Asia/Kolkata',
       purpose: dto.purpose,
       deliveryMethod: dto.deliveryMethod || 'google_meet',
-      amount: fee,
-      status: 'pending',
+      amount: 0,
+      status: 'confirmed',
+      meetingLink: 'https://meet.google.com/rj-session-direct',
     });
 
-    return { success: true, data: booking, timestamp: new Date().toISOString() };
+    return { 
+      success: true, 
+      data: booking, 
+      message: 'Booking confirmed and scheduled successfully',
+      timestamp: new Date().toISOString() 
+    };
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
   @Get('admin/all')
-  @ApiOperation({ summary: 'Get all bookings (Admin only)' })
+  @ApiOperation({ summary: 'Get all bookings' })
   async getAllAdmin(): Promise<ApiResponse<any>> {
     const data = await this.bookingModel.find().sort({ createdAt: -1 });
     return { success: true, data, timestamp: new Date().toISOString() };
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
   @Patch('admin/:id/status')
-  @ApiOperation({ summary: 'Update booking status (Admin only)' })
+  @ApiOperation({ summary: 'Update booking status' })
   async updateStatus(@Param('id') id: string, @Body('status') status: string): Promise<ApiResponse<any>> {
     const data = await this.bookingModel.findByIdAndUpdate(id, { status }, { new: true });
     return { success: true, data, timestamp: new Date().toISOString() };

@@ -287,7 +287,7 @@ export const Home: React.FC = () => {
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed">
               Book a live 1-on-1 session for full-stack architecture reviews, Spring Boot microservices,
-              AI/LLM project development, or career portfolio guidance. Instant slot booking with secure Razorpay checkout.
+              AI/LLM project development, or career portfolio guidance. Instant slot booking and direct calendar confirmation.
             </p>
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link

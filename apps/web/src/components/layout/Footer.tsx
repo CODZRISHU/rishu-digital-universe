@@ -107,9 +107,9 @@ export const Footer: React.FC = () => {
         <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-gray-500">
           <p>© {new Date().getFullYear()} Rishu Kumar Jha. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link to="/admin/login" className="hover:text-gray-300 flex items-center gap-1 transition-colors">
+            <Link to="/admin" className="hover:text-gray-300 flex items-center gap-1 transition-colors">
               <Terminal className="w-3.5 h-3.5 text-[#A855F7]" />
-              <span>Admin Access</span>
+              <span>Admin CMS</span>
             </Link>
             <span className="text-gray-700">|</span>
             <span className="text-gray-400">Crafted with React 19, NestJS & Three.js</span>

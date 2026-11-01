@@ -128,10 +128,10 @@ export const Services: React.FC = () => {
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-heading font-bold text-white">
-                      ₹{service.price.toLocaleString()}
+                    <span className="text-xs font-mono text-green-400 bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
+                      Free 1-on-1 Session
                     </span>
-                    <p className="text-[11px] font-mono text-gray-400">/ session ({service.durationMinutes}m)</p>
+                    <p className="text-[11px] font-mono text-gray-400 mt-1">{service.durationMinutes} mins video call</p>
                   </div>
                 </div>
 

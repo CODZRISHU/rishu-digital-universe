@@ -62,9 +62,9 @@ export const App: React.FC = () => {
             <Route path="/book-session" element={<BookSession />} />
             <Route path="/contact" element={<Contact />} />
             
-            {/* Admin Portal */}
-            <Route path="/admin/login" element={<AdminLogin />} />
+            {/* Admin CMS (Direct Access - No Login Barrier) */}
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/login" element={<AdminDashboard />} />
 
             {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
