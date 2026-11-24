@@ -96,6 +96,7 @@ export const Navbar: React.FC = () => {
           <div className="hidden lg:flex items-center gap-3">
             <a
               href="/resume.pdf"
+              download="Rishu-Kumar-Jha-Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono text-gray-300 glass-button hover:text-white"
@@ -173,6 +174,7 @@ export const Navbar: React.FC = () => {
               <div className="grid grid-cols-2 gap-2">
                 <a
                   href="/resume.pdf"
+                  download="Rishu-Kumar-Jha-Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-mono glass-button text-gray-200"

@@ -8,7 +8,8 @@ import {
   Layers, 
   Cpu, 
   Code2, 
-  GitBranch 
+  GitBranch,
+  FileDown
 } from 'lucide-react';
 import { portfolioApi } from '../services/api';
 
@@ -69,17 +70,29 @@ export const Experience: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="space-y-3 mb-16">
-        <div className="inline-flex items-center gap-2 text-xs font-mono text-[#00D9FF] uppercase tracking-widest">
-          <Briefcase className="w-4 h-4" />
-          <span>Vertical Career Trajectory</span>
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 text-xs font-mono text-[#00D9FF] uppercase tracking-widest">
+            <Briefcase className="w-4 h-4" />
+            <span>Vertical Career Trajectory</span>
+          </div>
+          <h1 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight">
+            Professional Experience
+          </h1>
+          <p className="text-gray-400 font-mono text-sm max-w-2xl">
+            Track record in enterprise full-stack engineering, microservices, and specialized software development.
+          </p>
         </div>
-        <h1 className="text-4xl sm:text-6xl font-heading font-extrabold tracking-tight">
-          Professional Experience
-        </h1>
-        <p className="text-gray-400 font-mono text-sm max-w-2xl">
-          Track record in enterprise full-stack engineering, microservices, and specialized software development.
-        </p>
+        <a
+          href="/resume.pdf"
+          download="Rishu-Kumar-Jha-Resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-mono text-white bg-gradient-to-r from-[#A855F7] to-[#7E22CE] hover:from-[#9333EA] hover:to-[#6B21A8] transition-all shadow-glow-primary hover:scale-[1.02] shrink-0"
+        >
+          <FileDown className="w-4 h-4" />
+          <span>Download Verified Resume</span>
+        </a>
       </div>
 
       {/* Vertical Timeline */}

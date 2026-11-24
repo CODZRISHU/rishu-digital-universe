@@ -13,7 +13,8 @@ import {
   Database,
   ShieldCheck,
   CheckCircle2,
-  Briefcase
+  Briefcase,
+  FileDown
 } from 'lucide-react';
 import { RishuAvatar } from '../avatar/RishuAvatar';
 import { StarryCosmos } from '../three/StarryCosmos';
@@ -119,6 +120,17 @@ export const Home: React.FC = () => {
                 <Calendar className="w-4 h-4 text-[#00D9FF]" />
                 <span>Book a Session</span>
               </Link>
+
+              <a
+                href="/resume.pdf"
+                download="Rishu-Kumar-Jha-Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-3.5 rounded-xl text-sm font-mono text-gray-300 glass-button hover:text-white hover:border-[#00D9FF]/40 transition-all duration-300"
+              >
+                <FileDown className="w-4 h-4 text-[#00D9FF]" />
+                <span>Download CV</span>
+              </a>
 
               <Link
                 to="/contact"
