@@ -2,6 +2,7 @@
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '9158153419:AAHiurRHTWWoFFdD4YuVYCmPOeO3kArdRJE';
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '1445026579';
 const TELEGRAM_PHONE_NUMBER = '9304783530';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'RishuUniverse2026!SecurePass';
 
 // In-memory cache for bookings and messages across function invocations
 let memoryBookings = [];

@@ -15,12 +15,29 @@ import {
   Users, 
   LogOut, 
   Search,
-  Filter
+  Filter,
+  Lock,
+  ShieldCheck,
+  KeyRound,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  ArrowRight
 } from 'lucide-react';
 import { portfolioApi } from '../../services/api';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+
+  // Strong Passkey loaded from .env (VITE_ADMIN_PASSWORD)
+  const ADMIN_PASSKEY = (import.meta.env.VITE_ADMIN_PASSWORD || 'RishuUniverse2026!SecurePass').trim();
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(() => {
+    return sessionStorage.getItem('rishu_admin_authorized') === 'true';
+  });
+  const [passInput, setPassInput] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   // Active table view: 'messages' or 'bookings' or 'telegram'
   const [activeTab, setActiveTab] = useState<'messages' | 'bookings' | 'telegram'>('messages');
@@ -28,7 +45,7 @@ export const AdminDashboard: React.FC = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const [telegramStatus, setTelegramStatus] = useState<any>({
@@ -72,8 +89,34 @@ export const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (isAuthorized) {
+      loadData();
+    }
+  }, [isAuthorized]);
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsVerifying(true);
+    setAuthError(null);
+
+    setTimeout(() => {
+      if (passInput.trim() === ADMIN_PASSKEY) {
+        sessionStorage.setItem('rishu_admin_authorized', 'true');
+        setIsAuthorized(true);
+        setPassInput('');
+      } else {
+        setAuthError('Access Denied: Invalid Administrator Passkey. Please verify your .env file.');
+      }
+      setIsVerifying(false);
+    }, 250);
+  };
+
+  const handleLock = () => {
+    sessionStorage.removeItem('rishu_admin_authorized');
+    setIsAuthorized(false);
+    setPassInput('');
+    setAuthError(null);
+  };
 
   const handleUpdateBookingStatus = async (id: string, newStatus: string) => {
     try {
@@ -116,6 +159,87 @@ export const AdminDashboard: React.FC = () => {
     b.purpose?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     b.sessionDate?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background ambient cosmic glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-gradient-to-br from-[#A855F7]/20 via-[#00D9FF]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-md w-full glass-panel-elevated p-8 sm:p-10 rounded-3xl border border-white/10 shadow-2xl relative z-10 space-y-6">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#A855F7]/25 to-[#00D9FF]/20 border border-[#A855F7]/40 flex items-center justify-center mx-auto text-[#00D9FF] shadow-glow-primary">
+              <Lock className="w-8 h-8 text-[#00D9FF]" />
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-mono tracking-widest uppercase bg-purple-500/10 border border-[#A855F7]/30 text-[#C4B5FD]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#00D9FF]" />
+              <span>Restricted Security Area</span>
+            </div>
+            <h1 className="text-2xl font-heading font-extrabold text-white tracking-tight">
+              Mission Control Clearance
+            </h1>
+            <p className="text-xs font-mono text-gray-400 leading-relaxed">
+              Protected Administrator Console. Enter the private passkey configured in your <span className="text-[#00D9FF] font-bold font-mono">.env</span> file to unlock.
+            </p>
+          </div>
+
+          {authError && (
+            <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-mono flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+              <span>{authError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleUnlock} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-mono text-gray-300 flex items-center justify-between">
+                <span>Administrator Passkey</span>
+                <span className="text-[10px] text-gray-500">Configured in .env</span>
+              </label>
+              <div className="relative">
+                <KeyRound className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  autoFocus
+                  placeholder="Enter secret passkey..."
+                  value={passInput}
+                  onChange={(e) => setPassInput(e.target.value)}
+                  className="w-full pl-10 pr-11 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#A855F7] font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3 text-gray-400 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isVerifying || !passInput}
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-xs font-mono text-white bg-gradient-to-r from-[#A855F7] to-[#7E22CE] hover:from-[#9333EA] hover:to-[#6B21A8] transition-all shadow-glow-primary hover:scale-[1.01] disabled:opacity-50"
+            >
+              <Lock className="w-4 h-4" />
+              <span>{isVerifying ? 'Verifying Clearance...' : 'Authenticate & Unlock'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          <div className="pt-2 text-center">
+            <button
+              onClick={() => navigate('/')}
+              className="text-xs font-mono text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              ← Return to Portfolio Universe
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#050505] text-white flex flex-col md:flex-row">
@@ -205,7 +329,17 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Footer controls */}
-        <div className="pt-6 border-t border-white/10 space-y-3 font-mono text-xs">
+        <div className="pt-6 border-t border-white/10 space-y-2 font-mono text-xs">
+          <button
+            onClick={handleLock}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition-all font-bold"
+          >
+            <div className="flex items-center gap-2">
+              <Lock className="w-3.5 h-3.5 text-red-400" />
+              <span>Lock Mission Control</span>
+            </div>
+            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-red-500/20">Secure</span>
+          </button>
           <a
             href="/"
             target="_blank"
@@ -248,6 +382,13 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={handleLock}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition-all font-bold"
+            >
+              <Lock className="w-3.5 h-3.5 text-red-400" />
+              <span>Lock Console</span>
+            </button>
             <button
               onClick={loadData}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono glass-button text-gray-300 hover:text-white"
