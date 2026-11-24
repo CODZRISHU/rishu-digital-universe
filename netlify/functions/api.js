@@ -61,21 +61,7 @@ exports.handler = async (event, context) => {
 
   // Route: POST /bookings
   if (method === 'POST' && path.endsWith('/bookings')) {
-    // 1. Weekend validation (Saturday and Sunday only)
-    if (body.sessionDate) {
-      const [y, m, d] = body.sessionDate.split('-').map(Number);
-      const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
-      if (day !== 0 && day !== 6) {
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({
-            success: false,
-            message: 'Appointments can only be scheduled on weekends (Saturday and Sunday) between 11:00 AM and 11:00 PM.',
-          }),
-        };
-      }
-    }
+
 
     const booking = {
       _id: 'bkg_' + Date.now() + Math.random().toString(36).substring(2, 6),

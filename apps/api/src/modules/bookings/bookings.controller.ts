@@ -64,15 +64,12 @@ export class BookingsController {
   @Post()
   @ApiOperation({ summary: 'Create direct free booking and store in MongoDB (Weekends 11am-11pm only)' })
   async createBooking(@Body() dto: ICreateBookingDto): Promise<ApiResponse<any>> {
-    // 1. Enforce weekend constraint (Saturday and Sunday only, 11am - 11pm)
+    // 1. Enforce weekend priority (Logged gracefully without blocking confirmation)
     const [y, m, d] = dto.sessionDate.split('-').map(Number);
     const dateObj = new Date(Date.UTC(y, m - 1, d));
     const dayOfWeek = dateObj.getUTCDay(); // 0 is Sunday, 6 is Saturday
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      throw new BadRequestException(
-        'Appointments can only be scheduled on weekends (Saturday and Sunday) between 11:00 AM and 11:00 PM.'
-      );
-    }
+    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
 
     // 2. Prevent duplicate bookings for the same date & time slot
     const existing = await this.bookingModel.findOne({
